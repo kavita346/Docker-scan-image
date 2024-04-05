@@ -21,7 +21,6 @@ jobs:
           echo "${{ secrets.DOCKER_PASSWORD_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
           docker build . -t sai40
 
-
       - name: Install Docker Scout
         run: |
           sudo apt update && sudo apt -y install curl
@@ -30,12 +29,10 @@ jobs:
 
       - name: Run Docker Scout CVE Scan
         run: |
-          docker scout cves archana > image-cves-scan.csv
+          docker scout cves <your_image_name_here> > image-cves-scan.csv
           cat image-cves-scan.csv
           
       - name: Checking Image Overview
         run: |
-          docker scout quickview archana > image-scan-overview.csv
+          docker scout quickview <your_image_name_here> > image-scan-overview.csv
           cat image-scan-overview.csv
-         
-      
