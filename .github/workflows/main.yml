@@ -19,7 +19,7 @@ jobs:
       - name: Build Docker Image
         run: |
           echo "${{ secrets.DOCKER_PASSWORD_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker build . -t archana
+          docker build . -t sai40
 
 
       - name: Install Docker Scout
