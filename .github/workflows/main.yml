@@ -1,4 +1,4 @@
-name: Docker Auto Deploy VM
+name: Docker Image Scan
 
 on:
   push:
@@ -6,34 +6,36 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-scan:
     runs-on: ubuntu-latest
 
+    env:
+      TERM: xterm
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Build Docker Image
-      run: |
-       echo "${{ secrets.DOCKER_PASSWORD_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USERNAME_SAI40 }}" --password-stdin
-       docker build . -t image-scanner
-    
-    - name: Installing Docker Scout
-      run: |
-       sudo apt update && sudo apt -y install curl
-       mkdir ~/.docker/cli-plugins
-       curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s --
-       
-    - name: Checking Image Overview
-      run: |
-       docker scout quickview image-scanner > image-scanner-overview.csv
-       
-    - name: Checking Image Vulnerabilities
-      run: |
-       docker scout cves --format only-packages --only-vuln-packages --only-severity critical image-scanner > image-scanner-cves.csv
-       clear
-       cat image-scanner-overview.csv
-       cat image-scanner-cves.csv
+      - name: Build Docker Image
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+          docker build . -t archana
 
-    
-    
+
+      - name: Install Docker Scout
+        run: |
+          sudo apt update && sudo apt -y install curl
+          mkdir -p ~/.docker/cli-plugins
+          curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s --
+
+      - name: Run Docker Scout CVE Scan
+        run: |
+          docker scout cves archana > image-cves-scan.csv
+          cat image-cves-scan.csv
+          
+      - name: Checking Image Overview
+        run: |
+          docker scout quickview archana > image-scan-overview.csv
+          cat image-scan-overview.csv
+         
+      
