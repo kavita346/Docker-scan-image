@@ -27,12 +27,12 @@ jobs:
           mkdir -p ~/.docker/cli-plugins
           curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s --
 
-      - name: Run Docker Scout CVE Scan
+      - name: Run Docker Scout CVE Scan 
         run: |
-          docker scout cves <your_image_name_here> > image-cves-scan.csv
+          docker scout cves sai40 > image-cves-scan.csv
           cat image-cves-scan.csv
           
       - name: Checking Image Overview
         run: |
-          docker scout quickview <your_image_name_here> > image-scan-overview.csv
+          docker scout quickview sai40 > image-scan-overview.csv
           cat image-scan-overview.csv
